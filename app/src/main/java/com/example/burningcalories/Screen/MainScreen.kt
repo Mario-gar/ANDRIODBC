@@ -15,21 +15,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.burningcalories.viewmodel.MainViewModel
 
 data class FoodEntry(val name: String, val calories: Int)
 
 @Composable
-fun MainScreen(navController: NavController) {
-
-
-    val foodList = remember {
-        mutableStateListOf(
-            FoodEntry("Desayuno: Avena con fruta", 320),
-            FoodEntry("Almuerzo: Pollo y arroz", 550),
-            FoodEntry("Snack: Yogurt", 100)
-        )
-    }
-
+fun MainScreen(navController: NavController, viewModel: MainViewModel) {
+    val foodList = viewModel.foodList
     val calorieGoal = 2000
     val caloriesConsumed = foodList.sumOf { it.calories }
     val caloriesRemaining = calorieGoal - caloriesConsumed
@@ -140,10 +132,7 @@ fun MainScreen(navController: NavController) {
 
 
             Button(
-                onClick = {
-
-                    foodList.add(FoodEntry("Nueva comida", 300))
-                },
+                onClick = { navController.navigate("addMeal") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp),
@@ -151,6 +140,30 @@ fun MainScreen(navController: NavController) {
             ) {
                 Text("Agregar comida", color = Color.White)
             }
+            Button(
+                onClick = { navController.navigate("exercise") },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2))
+            ) {
+                Text("Agregar ejercicio", color = Color.White)
+            }
+
+            Button(
+                onClick = { navController.navigate("water") },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00ACC1))
+            ) {
+                Text("Registrar agua", color = Color.White)
+            }
+
+            Button(
+                onClick = { navController.navigate("history") },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8E24AA))
+            ) {
+                Text("Ver historial de hoy", color = Color.White)
+            }
+
         }
     }
 }

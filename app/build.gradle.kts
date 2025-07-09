@@ -61,4 +61,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose.v260)
     implementation(libs.kotlinx.serialization.json.v160)
     implementation(libs.androidx.navigation.compose.v275)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
+    implementation(libs.okhttp.logging)
 }

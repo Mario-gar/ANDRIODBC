@@ -1,5 +1,6 @@
 package com.example.burningcalories.Screen
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,17 +11,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.burningcalories.repository.AuthRepository
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(navController: NavController) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-
+    var loading by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     Box(
         modifier = Modifier
@@ -54,7 +63,7 @@ fun LoginScreen(navController: NavController) {
                     text = "🔥 Burning Calories",
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFFD84315) // rojo quemado
+                    color = Color(0xFFD84315)
                 )
 
                 Text(
@@ -77,18 +86,46 @@ fun LoginScreen(navController: NavController) {
                     onValueChange = { password = it },
                     label = { Text("Contraseña") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth()
                 )
 
+                if (errorMessage != null) {
+                    Text(
+                        text = errorMessage!!,
+                        color = Color.Red,
+                        fontSize = 14.sp
+                    )
+                }
+
                 Button(
                     onClick = {
-
-                        navController.navigate("main")
+                        loading = true
+                        errorMessage = null
+                        scope.launch {
+                            try {
+                                val repo = AuthRepository(context)
+                                val success = repo.login(email.trim(), password)
+                                if (success) {
+                                    navController.navigate("main") {
+                                        popUpTo("login") { inclusive = true }
+                                    }
+                                }
+                            } catch (e: Exception) {
+                                errorMessage = "Credenciales incorrectas o error de conexión"
+                            } finally {
+                                loading = false
+                            }
+                        }
                     },
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF388E3C))
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF388E3C)),
+                    enabled = !loading
                 ) {
+                    if (loading) {
+                        CircularProgressIndicator(color = Color.White, modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
                     Text("Ingresar", fontSize = 16.sp, color = Color.White)
                 }
 

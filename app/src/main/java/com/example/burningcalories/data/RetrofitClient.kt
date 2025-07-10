@@ -1,6 +1,7 @@
 package com.example.burningcalories.data
 
 import android.content.Context
+import com.example.burningcalories.data.TokenManager
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -16,20 +17,23 @@ object RetrofitClient {
             level = HttpLoggingInterceptor.Level.BODY
         }
 
+        val tokenManager = TokenManager(context)
+
         val authInterceptor = Interceptor { chain ->
-            val token = TokenManager(context).getToken()
-            val request = if (token != null) {
+            val token = tokenManager.getToken()
+            val request = if (!token.isNullOrBlank()) {
                 chain.request().newBuilder()
                     .addHeader("Authorization", "Bearer $token")
                     .build()
-            } else chain.request()
-
+            } else {
+                chain.request()
+            }
             chain.proceed(request)
         }
 
         val client = OkHttpClient.Builder()
-            .addInterceptor(logging)
-            .addInterceptor(authInterceptor)
+            .addInterceptor(logging)       // Ver solicitudes/respuestas en Logcat
+            .addInterceptor(authInterceptor) // Agrega el token automáticamente
             .build()
 
         return Retrofit.Builder()

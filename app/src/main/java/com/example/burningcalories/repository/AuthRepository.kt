@@ -1,13 +1,11 @@
 package com.example.burningcalories.repository
 
-
 import android.content.Context
 import com.example.burningcalories.data.AuthApi
 import com.example.burningcalories.data.RetrofitClient
 import com.example.burningcalories.data.TokenManager
 import com.example.burningcalories.model.AuthRequest
 import com.example.burningcalories.model.RegisterRequest
-
 
 class AuthRepository(private val context: Context) {
     private val api = RetrofitClient.getRetrofit(context).create(AuthApi::class.java)
@@ -22,8 +20,8 @@ class AuthRepository(private val context: Context) {
 
     suspend fun register(request: RegisterRequest): Boolean {
         val response = api.register(request)
-        tokenManager.saveToken(response.token)
+        // Como ya no se devuelve un token, no se guarda nada
+        // tokenManager.saveToken(response.token) <-- ELIMINADO
         return true
     }
-
 }

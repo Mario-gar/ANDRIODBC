@@ -7,5 +7,7 @@ data class UsuarioDTO(
     val primerApellido: String,
     val segundoApellido: String,
     val edad: Int,
-    val tipoPersona: TipoPersona
+    val tipoPersona: TipoPersona,
+    val email: String,
+    val contrasena: String // si se incluye en la respuesta
 )

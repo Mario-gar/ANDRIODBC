@@ -1,6 +1,8 @@
 package com.example.calorietracker.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -9,9 +11,10 @@ import com.example.burningcalories.Screen.ExerciseScreen
 import com.example.burningcalories.Screen.HistoryScreen
 import com.example.burningcalories.Screen.LoginScreen
 import com.example.burningcalories.Screen.MainScreen
-import com.example.burningcalories.Screen.RegisterScreen
 import com.example.burningcalories.Screen.WaterScreen
+import com.example.burningcalories.screens.RegisterScreen
 import com.example.burningcalories.viewmodel.MainViewModel
+import com.example.burningcalories.viewmodel.RegisterViewModel
 import com.example.calorietracker.screens.*
 
 
@@ -29,7 +32,10 @@ fun AppNavigation(navController: NavHostController) {
         }
 
         composable("register") {
-            RegisterScreen(navController)
+            val context = LocalContext.current
+            val viewModel = remember { RegisterViewModel(context) }
+
+            RegisterScreen(navController = navController, viewModel = viewModel)
         }
 
         composable("main") {

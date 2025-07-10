@@ -6,7 +6,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -19,6 +18,7 @@ import com.example.burningcalories.viewmodel.MainViewModel
 fun HistoryScreen(navController: NavController, viewModel: MainViewModel) {
     val foodList = viewModel.foodList
     val exerciseList = viewModel.exerciseList
+    val waterList = viewModel.waterList
 
     val totalCaloriesConsumed = foodList.sumOf { it.calories }
     val totalProtein = foodList.sumOf { it.protein }
@@ -26,6 +26,7 @@ fun HistoryScreen(navController: NavController, viewModel: MainViewModel) {
     val totalFat = foodList.sumOf { it.fat }
 
     val totalCaloriesBurned = exerciseList.sumOf { it.calories }
+    val totalWaterConsumed = waterList.sumOf { it.amount }
 
     Box(
         modifier = Modifier
@@ -70,9 +71,17 @@ fun HistoryScreen(navController: NavController, viewModel: MainViewModel) {
                 Text("Calorías quemadas: $totalCaloriesBurned kcal")
 
                 Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "💧 Agua consumida",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text("Total: $totalWaterConsumed ml")
             }
 
             item {
+                Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = "🍽️ Comidas registradas",
                     style = MaterialTheme.typography.titleMedium,
@@ -114,6 +123,28 @@ fun HistoryScreen(navController: NavController, viewModel: MainViewModel) {
                         Text("💪 ${ex.name}", fontWeight = FontWeight.SemiBold)
                         Text("Duración: ${ex.duration} min")
                         Text("Calorías quemadas: ${ex.calories} kcal")
+                    }
+                }
+            }
+
+            // Opcional: listado detallado de entradas de agua
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "💧 Entradas de agua",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            items(waterList) { water ->
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(4.dp)
+                ) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Text("Cantidad: ${water.amount} ml")
                     }
                 }
             }
